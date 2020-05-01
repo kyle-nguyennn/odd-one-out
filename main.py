@@ -12,6 +12,7 @@ import time
 import scipy
 import keyboard
 from multiprocessing import Process
+import random
 
 Box = collections.namedtuple('Box', 'left top width height')
 
@@ -112,7 +113,8 @@ def oddOneOut(game_play, record=False):
     game_play_np = np.array(game_play)
     output = game_play_np.copy()
     gray = cv2.cvtColor(game_play_np, cv2.COLOR_BGR2GRAY)
-    circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1.1, 1)
+    a = random.uniform(1.1, 1.5)
+    circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, a, 1)
 
     # ensure at least 5 circles were found
     if circles is not None and circles.shape[1] >= 4:
@@ -177,14 +179,14 @@ if __name__ == "__main__":
         # locate game_region. Assume this is fresh start
         # TODO: handle the case where it need restart the game
         print("Finding game region ...")
-        game_region = locateOnScreen('game_region.png', err)
+        game_region = locateOnScreen('game_region_windows.png', err)
         focus_region = Box(game_region.left, game_region.top + game_region.height/3, \
                 game_region.width, 2*game_region.height/3)
         print(f"Found game region at ({game_region.left}, {game_region.top})")
         #out = cv2.VideoWriter('output.mp4', fourcc, 5.0, (game_region.width, game_region.height))
 
         print("Finding start button ...")
-        start_button = locateOnScreen('start_button.png', err)
+        start_button = locateOnScreen('start_button_windows.png', err)
         print(f"Found start button at ({start_button.left}, {start_button.top})")
         moveToCenter(start_button, physical=True)
         #pyautogui.leftClick()
@@ -193,8 +195,8 @@ if __name__ == "__main__":
         # wait to start
         print("Get ready ...")
         # game loop
-        for j in range(game_loop):
-        #while True:
+        #for j in range(game_loop):
+        while True:
             try:
                 #time.sleep(break_time)
                 game_play = observe(focus_region, record=False)
