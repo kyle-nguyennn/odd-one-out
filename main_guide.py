@@ -164,9 +164,9 @@ if __name__ == "__main__":
     _calibrate()
     # set hyper parameter
     err = 0.2 # error tolerance for finding regions of the screen
-    break_time = 0.02 # in seconds
+    break_time = 0.05 # in seconds
     train_loop = 1
-    game_loop  = 200
+    game_loop  = 100
     # setup 'q' listener to quit playing
     #p = Process(target=quitListener)
     #p.start()
@@ -178,32 +178,30 @@ if __name__ == "__main__":
         # TODO: handle the case where it need restart the game
         print("Finding game region ...")
         game_region = locateOnScreen('game_region.png', err)
-        focus_region = Box(game_region.left, game_region.top + game_region.height/3, \
-                game_region.width, 2*game_region.height/3)
         print(f"Found game region at ({game_region.left}, {game_region.top})")
         #out = cv2.VideoWriter('output.mp4', fourcc, 5.0, (game_region.width, game_region.height))
-
+        """
         print("Finding start button ...")
         start_button = locateOnScreen('start_button.png', err)
         print(f"Found start button at ({start_button.left}, {start_button.top})")
         moveToCenter(start_button, physical=True)
         #pyautogui.leftClick()
-        pyautogui.doubleClick()
-
+        #pyautogui.doubleClick()
+        """
         # wait to start
         print("Get ready ...")
         # game loop
-        for j in range(game_loop):
-        #while True:
+        #for j in range(game_loop):
+        while True:
             try:
                 #time.sleep(break_time)
-                game_play = observe(focus_region, record=False)
-                x, y = oddOneOut(game_play, record=False)
+                game_play = observe(game_region, record=False)
+                x, y = oddOneOut(game_play, record=True)
                 if x and y:
                     print(f"Odd at {x}, {y}")
-                    x_, y_ = moveInGame(x, y, focus_region)
+                    #x_, y_ = moveInGame(x, y, game_region)
                     #pyautogui.leftClick(x_, y_)
-                    pyautogui.doubleClick(x_, y_)
+                    #pyautogui.doubleClick(x_, y_)
                 if qIsPressed:
                     break
             except Exception as e:
